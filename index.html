@@ -1,0 +1,1178 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gündem.io — Türkiye'nin Haber Platformu</title>
+<meta name="description" content="Gündem.io — Türkiye'nin en güncel haber platformu. Son dakika, ekonomi, siyaset, spor ve daha fazlası.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   RESET & VARIABLES
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --red: #E24B4A;
+  --red-dark: #A32D2D;
+  --red-light: #FCEBEB;
+  --ink: #1a1a1a;
+  --muted: #5a5a5a;
+  --faint: #999;
+  --bg: #ffffff;
+  --bg2: #f7f6f4;
+  --bg3: #f0efe9;
+  --border: rgba(0,0,0,0.08);
+  --border2: rgba(0,0,0,0.15);
+  --green: #3B6D11;
+  --shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ink: #f0ede8;
+    --muted: #aaa;
+    --faint: #666;
+    --bg: #1c1c1e;
+    --bg2: #2c2c2e;
+    --bg3: #111113;
+    --border: rgba(255,255,255,0.08);
+    --border2: rgba(255,255,255,0.15);
+    --red-light: rgba(226,75,74,0.15);
+    --shadow: 0 1px 3px rgba(0,0,0,0.3);
+  }
+}
+
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Source Sans 3', -apple-system, sans-serif;
+  background: var(--bg3);
+  color: var(--ink);
+  font-size: 15px;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* ============================================================
+   BREAKING BAR
+   ============================================================ */
+.breaking-bar {
+  background: var(--red);
+  color: white;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
+}
+.breaking-label {
+  background: var(--red-dark);
+  padding: 0 14px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  z-index: 2;
+}
+.ticker-wrap { overflow: hidden; flex: 1; }
+.ticker-track {
+  display: inline-block;
+  white-space: nowrap;
+  animation: ticker 40s linear infinite;
+  font-size: 12px;
+  font-weight: 400;
+  padding-left: 100%;
+}
+.ticker-track:hover { animation-play-state: paused; }
+@keyframes ticker {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-100%); }
+}
+.ticker-item { display: inline-block; margin-right: 48px; }
+.ticker-item::before { content: "•"; margin-right: 12px; opacity: 0.6; }
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+header {
+  background: var(--bg);
+  border-bottom: 0.5px solid var(--border2);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow);
+}
+
+.header-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 60px;
+  gap: 16px;
+}
+
+.logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 26px;
+  font-weight: 900;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+.logo span { color: var(--red); }
+
+.header-widgets {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex: 1;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.wpill {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--bg2);
+  border: 0.5px solid var(--border);
+  border-radius: 20px;
+  padding: 4px 10px;
+  font-size: 11px;
+  white-space: nowrap;
+}
+.wpill-label { color: var(--faint); }
+.wpill-val { font-weight: 500; color: var(--ink); }
+.wpill-chg { font-weight: 500; font-size: 10px; }
+.wpill-chg.up { color: var(--green); }
+.wpill-chg.down { color: var(--red); }
+
+.search-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+.search-wrap input {
+  background: var(--bg2);
+  border: 0.5px solid var(--border2);
+  border-radius: 8px;
+  padding: 7px 12px 7px 32px;
+  font-size: 13px;
+  color: var(--ink);
+  font-family: inherit;
+  width: 180px;
+  transition: width 0.2s, border-color 0.15s;
+  outline: none;
+}
+.search-wrap input::placeholder { color: var(--faint); }
+.search-wrap input:focus { border-color: var(--red); width: 220px; }
+.search-icon {
+  position: absolute;
+  left: 9px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--faint);
+  font-size: 14px;
+  pointer-events: none;
+}
+
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  padding: 6px;
+  flex-shrink: 0;
+}
+.hamburger span {
+  width: 22px;
+  height: 1.5px;
+  background: var(--ink);
+  border-radius: 2px;
+  transition: all 0.2s;
+}
+
+/* NAV */
+.nav-outer {
+  border-top: 0.5px solid var(--border);
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.nav-outer::-webkit-scrollbar { display: none; }
+.nav-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+.nav-item {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 10px 14px;
+  cursor: pointer;
+  color: var(--muted);
+  border-bottom: 2px solid transparent;
+  transition: all 0.15s;
+  white-space: nowrap;
+  user-select: none;
+}
+.nav-item:hover { color: var(--ink); }
+.nav-item.active { color: var(--ink); border-bottom-color: var(--red); }
+
+/* MOBILE NAV DRAWER */
+.mobile-drawer {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 200;
+}
+.drawer-overlay {
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,0.5);
+}
+.drawer-panel {
+  position: absolute;
+  top: 0; right: 0;
+  width: min(280px, 85vw);
+  height: 100%;
+  background: var(--bg);
+  padding: 24px 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.drawer-close {
+  align-self: flex-end;
+  font-size: 22px;
+  cursor: pointer;
+  color: var(--muted);
+  margin-bottom: 16px;
+  line-height: 1;
+  padding: 4px;
+}
+.drawer-item {
+  font-size: 15px;
+  font-weight: 500;
+  padding: 12px 0;
+  border-bottom: 0.5px solid var(--border);
+  cursor: pointer;
+  color: var(--muted);
+  transition: color 0.1s;
+}
+.drawer-item:hover, .drawer-item.active { color: var(--ink); }
+
+/* ============================================================
+   LAYOUT
+   ============================================================ */
+.page { max-width: 1200px; margin: 0 auto; padding: 20px; }
+
+.date-line {
+  font-size: 10px;
+  color: var(--faint);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+/* ============================================================
+   LOADING STATE
+   ============================================================ */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  gap: 12px;
+}
+.spinner {
+  width: 28px; height: 28px;
+  border: 2px solid var(--border2);
+  border-top-color: var(--red);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-text { font-size: 13px; color: var(--faint); }
+
+/* ============================================================
+   HERO GRID (desktop 3-col)
+   ============================================================ */
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1px;
+  background: var(--border);
+  border: 0.5px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+.card {
+  background: var(--bg);
+  padding: 16px;
+  cursor: pointer;
+  transition: background 0.12s;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-decoration: none;
+  color: inherit;
+}
+.card:hover { background: var(--bg2); }
+.card.featured { grid-column: span 2; grid-row: span 2; }
+
+.card-source-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.card-cat {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--red);
+}
+.card-source {
+  font-size: 10px;
+  color: var(--faint);
+}
+
+.card-thumb {
+  width: 100%;
+  aspect-ratio: 16/9;
+  object-fit: cover;
+  border-radius: 6px;
+  background: var(--bg3);
+  border: 0.5px solid var(--border);
+}
+.card-thumb-placeholder {
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 6px;
+  background: var(--bg3);
+  border: 0.5px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-title-big {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.25;
+  flex: 1;
+}
+.card-title-med {
+  font-family: 'Playfair Display', serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.3;
+  flex: 1;
+}
+.card-desc {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.card-time { font-size: 11px; color: var(--faint); }
+
+/* ============================================================
+   TWO-COL SECTION
+   ============================================================ */
+.two-col {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+/* ============================================================
+   SECTION HEADER
+   ============================================================ */
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.section-title {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.section-line { flex: 1; height: 0.5px; background: var(--border2); }
+
+/* ============================================================
+   LIST CARD (most read)
+   ============================================================ */
+.list-card {
+  background: var(--bg);
+  border: 0.5px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.list-item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 12px 16px;
+  border-bottom: 0.5px solid var(--border);
+  cursor: pointer;
+  transition: background 0.1s;
+  text-decoration: none;
+  color: inherit;
+}
+.list-item:last-child { border-bottom: none; }
+.list-item:hover { background: var(--bg2); }
+.list-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px;
+  font-weight: 900;
+  color: var(--border2);
+  min-width: 20px;
+  line-height: 1.1;
+  flex-shrink: 0;
+}
+.list-content { flex: 1; min-width: 0; }
+.list-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+  line-height: 1.35;
+  margin-bottom: 4px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.list-meta { font-size: 11px; color: var(--faint); display: flex; gap: 8px; }
+
+/* ============================================================
+   SIDEBAR WIDGETS
+   ============================================================ */
+.sidebar { display: flex; flex-direction: column; gap: 14px; }
+
+.side-widget {
+  background: var(--bg);
+  border: 0.5px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.side-widget-header {
+  padding: 10px 14px;
+  border-bottom: 0.5px solid var(--border);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+/* döviz */
+.doviz-grid { display: grid; grid-template-columns: 1fr 1fr; }
+.doviz-item {
+  padding: 10px 14px;
+  border-right: 0.5px solid var(--border);
+  border-bottom: 0.5px solid var(--border);
+}
+.doviz-item:nth-child(2n) { border-right: none; }
+.doviz-item:nth-last-child(-n+2) { border-bottom: none; }
+.doviz-name { font-size: 10px; color: var(--faint); margin-bottom: 2px; }
+.doviz-val { font-size: 15px; font-weight: 500; color: var(--ink); }
+.doviz-chg { font-size: 10px; font-weight: 600; }
+.doviz-chg.up { color: var(--green); }
+.doviz-chg.down { color: var(--red); }
+
+/* hava */
+.hava-body { padding: 12px 14px; }
+.hava-city { font-size: 10px; color: var(--faint); }
+.hava-main { display: flex; align-items: center; gap: 8px; margin: 6px 0 8px; }
+.hava-icon { font-size: 30px; }
+.hava-temp { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 700; color: var(--ink); line-height: 1; }
+.hava-desc { font-size: 12px; color: var(--muted); }
+.hava-days { display: flex; justify-content: space-between; }
+.hava-day { text-align: center; font-size: 10px; color: var(--faint); }
+.hava-day strong { display: block; font-size: 13px; font-weight: 500; color: var(--ink); margin-top: 3px; }
+
+/* tags */
+.tag-cloud { padding: 12px; display: flex; flex-wrap: wrap; gap: 6px; }
+.tag {
+  font-size: 11px;
+  padding: 4px 10px;
+  background: var(--bg2);
+  border: 0.5px solid var(--border);
+  border-radius: 20px;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.12s;
+  user-select: none;
+}
+.tag:hover { background: var(--bg3); color: var(--ink); }
+.tag.hot { background: var(--red-light); border-color: rgba(226,75,74,0.3); color: var(--red-dark); }
+
+/* ============================================================
+   LATEST NEWS GRID
+   ============================================================ */
+.news-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 0.5px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+footer {
+  text-align: center;
+  padding: 24px 20px;
+  font-size: 11px;
+  color: var(--faint);
+  border-top: 0.5px solid var(--border);
+  margin-top: 32px;
+  letter-spacing: 0.03em;
+}
+footer a { color: var(--faint); text-decoration: none; }
+footer a:hover { color: var(--muted); }
+
+/* ============================================================
+   ERROR BANNER
+   ============================================================ */
+.error-banner {
+  background: var(--red-light);
+  border: 0.5px solid rgba(226,75,74,0.3);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 12px;
+  color: var(--red-dark);
+  margin-bottom: 16px;
+  display: none;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 900px) {
+  .hero-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .card.featured {
+    grid-column: span 2;
+    grid-row: span 1;
+  }
+  .two-col {
+    grid-template-columns: 1fr;
+  }
+  .news-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .header-widgets { display: none; }
+  .search-wrap { display: none; }
+  .hamburger { display: flex; }
+  .nav-outer { display: none; }
+
+  .hero-grid {
+    grid-template-columns: 1fr;
+    border-radius: 10px;
+  }
+  .card.featured { grid-column: span 1; }
+
+  .news-grid { grid-template-columns: 1fr; }
+
+  .card-title-big { font-size: 17px; }
+  .page { padding: 12px; }
+
+  .doviz-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 380px) {
+  .logo { font-size: 22px; }
+}
+</style>
+</head>
+<body>
+
+<!-- BREAKING BAR -->
+<div class="breaking-bar">
+  <span class="breaking-label">Son Dakika</span>
+  <div class="ticker-wrap">
+    <span class="ticker-track" id="tickerTrack">
+      <span class="ticker-item">Yükleniyor…</span>
+    </span>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="header-main">
+    <a href="#" class="logo">Gündem<span>.</span>io</a>
+
+    <div class="header-widgets" id="headerWidgets">
+      <div class="wpill">
+        <span class="wpill-label">USD/TRY</span>
+        <span class="wpill-val" id="hw-usd">–</span>
+        <span class="wpill-chg" id="hw-usd-chg"></span>
+      </div>
+      <div class="wpill">
+        <span class="wpill-label">EUR/TRY</span>
+        <span class="wpill-val" id="hw-eur">–</span>
+        <span class="wpill-chg" id="hw-eur-chg"></span>
+      </div>
+      <div class="wpill">
+        <span class="wpill-label">BIST 100</span>
+        <span class="wpill-val" id="hw-bist">–</span>
+        <span class="wpill-chg" id="hw-bist-chg"></span>
+      </div>
+      <div class="wpill">
+        <span class="wpill-label">İstanbul</span>
+        <span class="wpill-val" id="hw-temp">–</span>
+      </div>
+    </div>
+
+    <div class="search-wrap">
+      <span class="search-icon">⌕</span>
+      <input type="text" id="searchInput" placeholder="Haber ara…" oninput="filterNews(this.value)">
+    </div>
+
+    <div class="hamburger" id="hamburger" onclick="toggleDrawer()">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+
+  <div class="nav-outer">
+    <div class="nav-inner" id="navInner"></div>
+  </div>
+</header>
+
+<!-- MOBILE DRAWER -->
+<div class="mobile-drawer" id="mobileDrawer">
+  <div class="drawer-overlay" onclick="toggleDrawer()"></div>
+  <div class="drawer-panel">
+    <div class="drawer-close" onclick="toggleDrawer()">✕</div>
+    <div id="drawerNav"></div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main class="page">
+  <div class="date-line" id="dateLine"></div>
+  <div class="error-banner" id="errorBanner"></div>
+
+  <!-- HERO -->
+  <div id="heroSection">
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <div class="loading-text">Haberler yükleniyor…</div>
+    </div>
+  </div>
+
+  <!-- TWO COL -->
+  <div class="two-col" id="twoColSection" style="display:none;">
+    <div>
+      <div class="section-header">
+        <span class="section-title">Son Haberler</span>
+        <div class="section-line"></div>
+      </div>
+      <div class="news-grid" id="latestGrid"></div>
+    </div>
+    <div class="sidebar">
+      <!-- Döviz -->
+      <div class="side-widget">
+        <div class="side-widget-header">Döviz &amp; Piyasalar</div>
+        <div class="doviz-grid" id="dovizGrid">
+          <div class="doviz-item"><div class="doviz-name">USD/TRY</div><div class="doviz-val" id="d-usd">–</div><div class="doviz-chg" id="d-usd-c"></div></div>
+          <div class="doviz-item"><div class="doviz-name">EUR/TRY</div><div class="doviz-val" id="d-eur">–</div><div class="doviz-chg" id="d-eur-c"></div></div>
+          <div class="doviz-item"><div class="doviz-name">GBP/TRY</div><div class="doviz-val" id="d-gbp">–</div><div class="doviz-chg" id="d-gbp-c"></div></div>
+          <div class="doviz-item"><div class="doviz-name">BIST 100</div><div class="doviz-val" id="d-bist">–</div><div class="doviz-chg" id="d-bist-c"></div></div>
+        </div>
+      </div>
+
+      <!-- Hava -->
+      <div class="side-widget">
+        <div class="side-widget-header">Hava Durumu — İstanbul</div>
+        <div class="hava-body">
+          <div class="hava-city">İstanbul, Türkiye</div>
+          <div class="hava-main">
+            <div class="hava-icon" id="havaIcon">⛅</div>
+            <div>
+              <div class="hava-temp" id="havaTemp">–°</div>
+              <div class="hava-desc" id="havaDesc">Yükleniyor</div>
+            </div>
+          </div>
+          <div class="hava-days" id="havaDays"></div>
+        </div>
+      </div>
+
+      <!-- Tags -->
+      <div class="side-widget">
+        <div class="side-widget-header">Öne Çıkan Konular</div>
+        <div class="tag-cloud" id="tagCloud"></div>
+      </div>
+
+      <!-- En çok okunanlar -->
+      <div>
+        <div class="section-header">
+          <span class="section-title">En Çok Okunanlar</span>
+          <div class="section-line"></div>
+        </div>
+        <div class="list-card" id="mostReadList"></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div style="margin-bottom:8px;">
+    <a href="#">Hakkımızda</a> &nbsp;·&nbsp;
+    <a href="#">İletişim</a> &nbsp;·&nbsp;
+    <a href="#">Gizlilik Politikası</a> &nbsp;·&nbsp;
+    <a href="#">Künye</a>
+  </div>
+  © 2026 Gündem.io — Tüm hakları saklıdır
+</footer>
+
+<script>
+/* ============================================================
+   CONFIG — RSS FEEDS
+   Buraya gerçek Türk haber RSS feed'leri eklendi.
+   CORS proxy: allorigins.win (ücretsiz, production'da kendi proxy'ini kur)
+   ============================================================ */
+const RSS_SOURCES = [
+  { name: "Hürriyet",        url: "https://www.hurriyet.com.tr/rss/anasayfa",           cat: "Gündem"   },
+  { name: "Milliyet",        url: "https://www.milliyet.com.tr/rss/rssNew/gundemRss.xml", cat: "Gündem"  },
+  { name: "NTV",             url: "https://www.ntv.com.tr/son-dakika.rss",               cat: "Gündem"   },
+  { name: "CNN Türk",        url: "https://www.cnnturk.com/feed/rss/all/news",           cat: "Gündem"   },
+  { name: "Sabah",           url: "https://www.sabah.com.tr/rss/anasayfa.xml",           cat: "Gündem"   },
+  { name: "Haberturk",       url: "https://www.haberturk.com/rss",                       cat: "Gündem"   },
+  { name: "TRT Haber",       url: "https://www.trthaber.com/sondakika.rss",              cat: "Gündem"   },
+  { name: "Bloomberg HT",    url: "https://www.bloomberght.com/rss",                     cat: "Ekonomi"  },
+  { name: "Dünya Gazetesi",  url: "https://www.dunya.com/rss",                           cat: "Ekonomi"  },
+  { name: "NTV Spor",        url: "https://www.ntvspor.net/rss",                         cat: "Spor"     },
+];
+
+/* Haber kategorileri */
+const CATEGORIES = ["Tüm Haberler","Gündem","Ekonomi","Siyaset","Spor","Dünya","Teknoloji","Kültür","Sağlık"];
+
+/* CORS proxy — ücretsiz test için */
+const PROXY = "https://api.allorigins.win/get?url=";
+
+/* Global state */
+let allArticles = [];
+let activeCategory = "Tüm Haberler";
+
+/* ============================================================
+   INIT
+   ============================================================ */
+document.addEventListener('DOMContentLoaded', () => {
+  setDateLine();
+  buildNav();
+  loadWeather();
+  loadForex();
+  loadAllRSS();
+  setInterval(loadForex, 60000);
+});
+
+function setDateLine() {
+  const d = new Date();
+  const opts = { weekday:'long', year:'numeric', month:'long', day:'numeric' };
+  document.getElementById('dateLine').textContent = d.toLocaleDateString('tr-TR', opts);
+}
+
+/* ============================================================
+   NAV
+   ============================================================ */
+function buildNav() {
+  const nav = document.getElementById('navInner');
+  const drawer = document.getElementById('drawerNav');
+  CATEGORIES.forEach(cat => {
+    const el = document.createElement('div');
+    el.className = 'nav-item' + (cat === activeCategory ? ' active' : '');
+    el.textContent = cat;
+    el.onclick = () => setCategory(cat);
+    nav.appendChild(el);
+
+    const del = document.createElement('div');
+    del.className = 'drawer-item' + (cat === activeCategory ? ' active' : '');
+    del.textContent = cat;
+    del.onclick = () => { setCategory(cat); toggleDrawer(); };
+    drawer.appendChild(del);
+  });
+}
+
+function setCategory(cat) {
+  activeCategory = cat;
+  document.querySelectorAll('.nav-item, .drawer-item').forEach(el => {
+    el.classList.toggle('active', el.textContent === cat);
+  });
+  renderArticles();
+}
+
+/* ============================================================
+   MOBILE DRAWER
+   ============================================================ */
+function toggleDrawer() {
+  const d = document.getElementById('mobileDrawer');
+  d.style.display = d.style.display === 'flex' ? 'none' : 'flex';
+}
+
+/* ============================================================
+   RSS LOADING
+   ============================================================ */
+async function loadAllRSS() {
+  const promises = RSS_SOURCES.map(src => fetchRSS(src));
+  const results = await Promise.allSettled(promises);
+
+  results.forEach((res, i) => {
+    if (res.status === 'fulfilled' && res.value.length) {
+      allArticles.push(...res.value);
+    }
+  });
+
+  if (allArticles.length === 0) {
+    // Fallback: demo haberler
+    allArticles = getDemoArticles();
+    showError("RSS kaynakları şu an erişilemedi. Demo haberler gösteriliyor. Gerçek veriler için kendi backend proxy'ini kurman gerekiyor.");
+  }
+
+  // Tarihe göre sırala
+  allArticles.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
+
+  updateBreakingBar();
+  renderArticles();
+  buildTagCloud();
+}
+
+async function fetchRSS(source) {
+  try {
+    const encoded = encodeURIComponent(source.url);
+    const res = await fetch(PROXY + encoded, { signal: AbortSignal.timeout(8000) });
+    if (!res.ok) return [];
+    const data = await res.json();
+    const xml = new DOMParser().parseFromString(data.contents, 'text/xml');
+    const items = Array.from(xml.querySelectorAll('item'));
+    return items.slice(0, 10).map(item => ({
+      title:    item.querySelector('title')?.textContent?.trim() || '',
+      desc:     stripHtml(item.querySelector('description')?.textContent || ''),
+      link:     item.querySelector('link')?.textContent?.trim() || '#',
+      pubDate:  item.querySelector('pubDate')?.textContent || new Date().toISOString(),
+      source:   source.name,
+      category: source.cat,
+      image:    extractImage(item),
+    })).filter(a => a.title.length > 10);
+  } catch { return []; }
+}
+
+function stripHtml(html) {
+  const tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  return tmp.textContent?.replace(/\s+/g,' ').trim().slice(0,200) || '';
+}
+
+function extractImage(item) {
+  const enc = item.querySelector('enclosure[type^="image"]');
+  if (enc) return enc.getAttribute('url');
+  const media = item.querySelector('thumbnail, content');
+  if (media) return media.getAttribute('url');
+  const desc = item.querySelector('description')?.textContent || '';
+  const m = desc.match(/src="([^"]+\.(?:jpg|jpeg|png|webp)[^"]*)"/i);
+  return m ? m[1] : null;
+}
+
+function timeAgo(dateStr) {
+  const diff = (Date.now() - new Date(dateStr)) / 1000;
+  if (diff < 60)  return 'Az önce';
+  if (diff < 3600) return Math.floor(diff/60) + ' dk önce';
+  if (diff < 86400) return Math.floor(diff/3600) + ' saat önce';
+  return Math.floor(diff/86400) + ' gün önce';
+}
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+function getFiltered() {
+  const q = (document.getElementById('searchInput')?.value || '').toLowerCase();
+  return allArticles.filter(a => {
+    const catMatch = activeCategory === 'Tüm Haberler' || a.category === activeCategory;
+    const qMatch   = !q || a.title.toLowerCase().includes(q) || a.desc.toLowerCase().includes(q);
+    return catMatch && qMatch;
+  });
+}
+
+function renderArticles() {
+  const articles = getFiltered();
+  renderHero(articles.slice(0, 5));
+  renderLatest(articles.slice(5, 17));
+  renderMostRead(articles.slice(0, 8));
+  document.getElementById('twoColSection').style.display = 'grid';
+}
+
+function renderHero(items) {
+  if (!items.length) {
+    document.getElementById('heroSection').innerHTML = '<p style="color:var(--faint);font-size:13px;padding:20px 0;">Bu kategoride haber bulunamadı.</p>';
+    return;
+  }
+
+  const grid = document.createElement('div');
+  grid.className = 'hero-grid';
+  grid.style.marginBottom = '24px';
+
+  items.forEach((a, i) => {
+    const card = document.createElement('a');
+    card.className = 'card' + (i === 0 ? ' featured' : '');
+    card.href = a.link;
+    card.target = '_blank';
+    card.rel = 'noopener';
+
+    const imgHtml = a.image
+      ? `<img class="card-thumb" src="${a.image}" alt="" loading="lazy" onerror="this.style.display='none'">`
+      : (i === 0 ? `<div class="card-thumb-placeholder" style="aspect-ratio:16/9;"></div>` : '');
+
+    card.innerHTML = `
+      <div class="card-source-row">
+        <span class="card-cat">${a.category}</span>
+        <span class="card-source">${a.source}</span>
+      </div>
+      ${i === 0 ? imgHtml : ''}
+      <div class="${i === 0 ? 'card-title-big' : 'card-title-med'}">${a.title}</div>
+      ${i === 0 && a.desc ? `<div class="card-desc">${a.desc}</div>` : ''}
+      <div class="card-time">${timeAgo(a.pubDate)}</div>
+    `;
+    grid.appendChild(card);
+  });
+
+  document.getElementById('heroSection').innerHTML = '';
+  document.getElementById('heroSection').appendChild(grid);
+}
+
+function renderLatest(items) {
+  const grid = document.getElementById('latestGrid');
+  grid.innerHTML = '';
+  items.forEach(a => {
+    const card = document.createElement('a');
+    card.className = 'card';
+    card.href = a.link;
+    card.target = '_blank';
+    card.rel = 'noopener';
+    card.innerHTML = `
+      <div class="card-source-row">
+        <span class="card-cat">${a.category}</span>
+        <span class="card-source">${a.source}</span>
+      </div>
+      <div class="card-title-med">${a.title}</div>
+      <div class="card-time">${timeAgo(a.pubDate)}</div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function renderMostRead(items) {
+  const list = document.getElementById('mostReadList');
+  list.innerHTML = '';
+  items.slice(0, 6).forEach((a, i) => {
+    const item = document.createElement('a');
+    item.className = 'list-item';
+    item.href = a.link;
+    item.target = '_blank';
+    item.rel = 'noopener';
+    item.innerHTML = `
+      <div class="list-num">0${i+1}</div>
+      <div class="list-content">
+        <div class="list-title">${a.title}</div>
+        <div class="list-meta"><span>${a.source}</span><span>${timeAgo(a.pubDate)}</span></div>
+      </div>
+    `;
+    list.appendChild(item);
+  });
+}
+
+/* ============================================================
+   BREAKING BAR TICKER
+   ============================================================ */
+function updateBreakingBar() {
+  const latest = allArticles.slice(0, 10);
+  const track = document.getElementById('tickerTrack');
+  track.innerHTML = latest.map(a =>
+    `<span class="ticker-item">${a.title}</span>`
+  ).join('');
+}
+
+/* ============================================================
+   SEARCH
+   ============================================================ */
+function filterNews(q) {
+  renderArticles();
+}
+
+/* ============================================================
+   TAG CLOUD
+   ============================================================ */
+function buildTagCloud() {
+  const hotWords = ['ekonomi','siyaset','dolar','faiz','enflasyon','seçim','deprem','spor','galatasaray','fenerbahçe','yapay zeka','istanbul','sağlık','iklim','dünya'];
+  const cloud = document.getElementById('tagCloud');
+  const titles = allArticles.map(a => a.title.toLowerCase()).join(' ');
+  const tags = hotWords.filter(w => titles.includes(w));
+  const hot = ['dolar','faiz','galatasaray'];
+  cloud.innerHTML = tags.slice(0, 14).map(t =>
+    `<span class="tag${hot.includes(t)?' hot':''}" onclick="document.getElementById('searchInput').value='${t}';filterNews('${t}')">${t}</span>`
+  ).join('');
+}
+
+/* ============================================================
+   HAVA DURUMU — Open-Meteo (ücretsiz, no API key)
+   ============================================================ */
+async function loadWeather() {
+  try {
+    // İstanbul koordinatları
+    const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=41.01&longitude=28.95&current=temperature_2m,weathercode&daily=temperature_2m_max,weathercode&timezone=Europe%2FIstanbul&forecast_days=5', { signal: AbortSignal.timeout(6000) });
+    const d = await res.json();
+    const temp = Math.round(d.current.temperature_2m);
+    const code = d.current.weathercode;
+
+    const icon = weatherIcon(code);
+    const desc = weatherDesc(code);
+
+    document.getElementById('havaTemp').textContent = temp + '°';
+    document.getElementById('havaDesc').textContent = desc;
+    document.getElementById('havaIcon').textContent = icon;
+    document.getElementById('hw-temp').textContent = temp + '°C';
+
+    const days = ['Pzt','Sal','Çar','Per','Cum','Cmt','Paz'];
+    const daysEl = document.getElementById('havaDays');
+    d.daily.time.slice(1, 5).forEach((dateStr, i) => {
+      const dayName = days[new Date(dateStr).getDay()];
+      const maxT = Math.round(d.daily.temperature_2m_max[i+1]);
+      const div = document.createElement('div');
+      div.className = 'hava-day';
+      div.innerHTML = `${dayName}<strong>${maxT}°</strong>`;
+      daysEl.appendChild(div);
+    });
+  } catch { /* sessizce geç */ }
+}
+
+function weatherIcon(code) {
+  if (code === 0) return '☀️';
+  if (code <= 2) return '⛅';
+  if (code <= 3) return '☁️';
+  if (code <= 67) return '🌧️';
+  if (code <= 77) return '❄️';
+  if (code <= 82) return '🌦️';
+  return '⛈️';
+}
+function weatherDesc(code) {
+  if (code === 0) return 'Açık';
+  if (code <= 2) return 'Parçalı bulutlu';
+  if (code <= 3) return 'Bulutlu';
+  if (code <= 51) return 'Çiseleyen';
+  if (code <= 67) return 'Yağmurlu';
+  if (code <= 77) return 'Karlı';
+  return 'Fırtınalı';
+}
+
+/* ============================================================
+   DÖVİZ — Exchange Rate API (ücretsiz)
+   ============================================================ */
+async function loadForex() {
+  try {
+    const res = await fetch('https://open.er-api.com/v6/latest/USD', { signal: AbortSignal.timeout(6000) });
+    const d = await res.json();
+    const rates = d.rates;
+
+    const usd = rates.TRY.toFixed(2);
+    const eur = (rates.TRY / rates.EUR).toFixed(2);
+    const gbp = (rates.TRY / rates.GBP).toFixed(2);
+
+    setForex('usd', usd,  -0.31);
+    setForex('eur', eur,  +0.12);
+    setForex('gbp', gbp,  +0.05);
+    setForex('bist','9.241', +1.24);
+
+    document.getElementById('hw-usd').textContent = usd;
+    document.getElementById('hw-eur').textContent = eur;
+    document.getElementById('hw-bist').textContent = '9.241';
+  } catch { /* sessizce geç */ }
+}
+
+function setForex(id, val, chg) {
+  const valEl = document.getElementById('d-' + id);
+  const chgEl = document.getElementById('d-' + id + '-c');
+  if (valEl) valEl.textContent = val;
+  if (chgEl) {
+    const sign = chg >= 0 ? '+' : '';
+    chgEl.textContent = `${chg >= 0 ? '▲' : '▼'} ${sign}${chg.toFixed(2)}%`;
+    chgEl.className = 'doviz-chg ' + (chg >= 0 ? 'up' : 'down');
+    const hwEl = document.getElementById('hw-' + id + '-chg');
+    if (hwEl) {
+      hwEl.textContent = `${chg >= 0 ? '▲' : '▼'} ${Math.abs(chg).toFixed(1)}%`;
+      hwEl.className = 'wpill-chg ' + (chg >= 0 ? 'up' : 'down');
+    }
+  }
+}
+
+/* ============================================================
+   ERROR BANNER
+   ============================================================ */
+function showError(msg) {
+  const el = document.getElementById('errorBanner');
+  el.textContent = '⚠ ' + msg;
+  el.style.display = 'block';
+}
+
+/* ============================================================
+   DEMO ARTICLES (RSS erişilemezse fallback)
+   ============================================================ */
+function getDemoArticles() {
+  const now = Date.now();
+  return [
+    { title:"Merkez Bankası politika faizini sabit tuttu", desc:"Para Politikası Kurulu yüzde 42.5 seviyesindeki politika faizini değiştirmedi.", link:"#", pubDate:new Date(now-3600000).toISOString(), source:"Bloomberg HT", category:"Ekonomi", image:null },
+    { title:"Galatasaray Şampiyonlar Ligi'nde çeyrek finale yükseldi", desc:"Sarı-kırmızılılar deplasmanda 2-0 kazanarak bir üst tura geçti.", link:"#", pubDate:new Date(now-7200000).toISOString(), source:"NTV Spor", category:"Spor", image:null },
+    { title:"Kabine toplantısı sona erdi, yeni teşvik paketi açıklandı", desc:"Cumhurbaşkanlığı'nda yapılan toplantıda ekonomik teşvik kararları kamuoyuyla paylaşıldı.", link:"#", pubDate:new Date(now-10800000).toISOString(), source:"Hürriyet", category:"Siyaset", image:null },
+    { title:"AB-Türkiye Zirvesi Brüksel'de başlıyor", desc:"İki tarafın gündeminde göç, enerji ve ticaret anlaşmaları yer alıyor.", link:"#", pubDate:new Date(now-14400000).toISOString(), source:"CNN Türk", category:"Dünya", image:null },
+    { title:"İstanbul'da deprem erken uyarı altyapısı güçlendiriliyor", desc:"Afet yönetim sistemlerine 500 milyon TL'lik yatırım yapılacağı açıklandı.", link:"#", pubDate:new Date(now-18000000).toISOString(), source:"TRT Haber", category:"Gündem", image:null },
+    { title:"Türkiye ihracat rekoru kırdı: Mart'ta 22 milyar dolar", desc:"Ticaret Bakanlığı açıkladığı verilere göre yıllık bazda yüzde 8.4 artış sağlandı.", link:"#", pubDate:new Date(now-21600000).toISOString(), source:"Dünya Gazetesi", category:"Ekonomi", image:null },
+    { title:"TBMM'de yapay zeka düzenlemesi yasalaştı", desc:"Yeni yasa yapay zeka sistemlerinin denetimi için bağımsız kurul oluşturulmasını öngörüyor.", link:"#", pubDate:new Date(now-25200000).toISOString(), source:"Sabah", category:"Teknoloji", image:null },
+    { title:"Türk lirası Mart ayının en güçlü performansını sergiledi", desc:"TL, dolar karşısında bu ay yüzde 1.2 değer kazandı.", link:"#", pubDate:new Date(now-28800000).toISOString(), source:"Milliyet", category:"Ekonomi", image:null },
+    { title:"Doğu Anadolu'da kış fırtınası: 12 il etkilendi", desc:"Meteoroloji Genel Müdürlüğü kar yağışı ve tipi uyarısı yayımladı.", link:"#", pubDate:new Date(now-32400000).toISOString(), source:"NTV", category:"Gündem", image:null },
+    { title:"Fenerbahçe transferde sürpriz bir ismin peşinde", desc:"Sarı-lacivertlilerin Portekizli yıldız için 25 milyon euroluk teklif hazırladığı öğrenildi.", link:"#", pubDate:new Date(now-36000000).toISOString(), source:"NTV Spor", category:"Spor", image:null },
+    { title:"Sağlık Bakanlığı yeni aşı takip sistemini devreye aldı", desc:"Dijital sağlık altyapısına entegre edilen sistem tüm aşı verilerini anlık izleyecek.", link:"#", pubDate:new Date(now-39600000).toISOString(), source:"Hürriyet", category:"Sağlık", image:null },
+    { title:"İzmir'de yeni metro hattı ihaleye çıkıyor", desc:"Bornova-Buca hattının ihalesi önümüzdeki ay yapılacak.", link:"#", pubDate:new Date(now-43200000).toISOString(), source:"CNN Türk", category:"Gündem", image:null },
+  ];
+}
+</script>
+</body>
+</html>
